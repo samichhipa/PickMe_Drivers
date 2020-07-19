@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.MainActivity">
+
+    <TextView
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/arca_majora_heavy"
+        android:text="Driver"
+        android:textColor="#092532"
+        android:textSize="32sp"/>
+
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/pick_me"/>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:fontFamily="@font/arca_majora_heavy"
+            android:id="@+id/loginBtn"
+            android:textColor="#fff"
+            android:elevation="10dp"
+            android:background="#f69e7b"
+            android:padding="8dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:textAllCaps="false"/>
+        <Button
+            android:fontFamily="@font/arca_majora_heavy"
+            android:id="@+id/registerBtn"
+            android:textColor="#fff"
+            android:elevation="10dp"
+            android:background="#596e79"
+            android:padding="8dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textAllCaps="false"/>
+
+
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

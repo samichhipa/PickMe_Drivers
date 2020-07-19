@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/arca_majora_heavy"
+        android:text="SignUp"
+        android:textColor="#092532"
+        android:textSize="28sp"
+
+        />
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/register_txt_name"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#939393"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_profile"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textColorHint="#939393"
+        android:textSize="20sp" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/regiser_email"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#939393"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_email"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textSize="20sp" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/register_password"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#939393"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textColorHint="#939393"
+        android:textSize="20sp" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/register_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_phone"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Phone"
+        android:inputType="number"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textSize="20sp"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#596e79" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/register_registerBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/login_btn"
+            android:elevation="10dp"
+            android:fontFamily="@font/arca_majora_bold"
+            android:padding="5dp"
+            android:text="Register"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/registerCancelBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/register_btn"
+            android:elevation="10dp"
+            android:fontFamily="@font/arca_majora_bold"
+            android:padding="5dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

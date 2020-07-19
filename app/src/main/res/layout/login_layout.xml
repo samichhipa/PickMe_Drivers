@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/arca_majora_heavy"
+        android:text="Login"
+        android:textColor="#092532"
+        android:textSize="28sp"
+
+        />
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/login_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_email"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Email"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textColorHint="#939393"
+        android:textSize="20sp"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#939393" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:drawableLeft="@drawable/ic_action_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="#000"
+        android:fontFamily="@font/arca_majora_bold"
+        android:hint="Password"
+        android:imeOptions="actionGo"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:textColor="#596e79"
+        android:textSize="20sp"
+        app:met_baseColor="#596e79"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#596e79"
+        app:met_singleLineEllipsis="true"
+        app:met_textColorHint="#596e79" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/login_SignIn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/login_btn"
+            android:elevation="10dp"
+            android:fontFamily="@font/arca_majora_bold"
+            android:padding="5dp"
+            android:text="Sign In"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/login_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/register_btn"
+            android:elevation="10dp"
+            android:fontFamily="@font/arca_majora_bold"
+            android:padding="5dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</LinearLayout>
