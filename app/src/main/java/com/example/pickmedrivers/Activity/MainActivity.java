@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                             drivers.setDriver_email(email);
                             drivers.setPassword(pass);
                             drivers.setDriver_phone(phone);
+                            drivers.setCar_type("Economical");
 
                             SignUp(drivers);
 
@@ -145,9 +146,8 @@ public class MainActivity extends AppCompatActivity {
                 Button btnLogin = v.findViewById(R.id.login_SignIn);
                 Button btncancel = v.findViewById(R.id.login_cancel);
 
-                builder.setView(v);
-
                 final AlertDialog alertDialog = builder.create();
+                alertDialog.setView(v);
 
                 btnLogin.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
 
                             login(email, pass);
+                            alertDialog.dismiss();
 
                         }
 
@@ -216,9 +217,31 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser firebaseUser=auth.getCurrentUser();
         if (firebaseUser!=null){
 
-            Intent intent=new Intent(MainActivity.this, HomeNavActivity.class);
-            startActivity(intent);
-            finish();
+
+            FirebaseDatabase.getInstance().getReference().child("Drivers").child(firebaseUser.getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            Drivers drivers=snapshot.getValue(Drivers.class);
+                            Common.currentDrivers=drivers;
+                            //Toast.makeText(MainActivity.this,"Login Successfull..", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, HomeNavActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+
+
+
 
         }
     }
@@ -272,7 +295,12 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                    Common.currentDrivers=snapshot.getValue(Drivers.class);
+                                    Drivers drivers=snapshot.getValue(Drivers.class);
+                                    Common.currentDrivers=drivers;
+                                    Toast.makeText(MainActivity.this,"Login Successfull..", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(MainActivity.this, HomeNavActivity.class);
+                                   startActivity(intent);
+                                    finish();
 
                                 }
 
@@ -282,10 +310,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                    Toast.makeText(MainActivity.this, "Login Successfull..", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, HomeNavActivity.class);
-                    startActivity(intent);
-                    finish();
+
 
                 }
 

@@ -81,7 +81,7 @@ public class DriverTrackingActivity extends FragmentActivity implements OnMapRea
 
     private GoogleMap mMap;
 
-    double lat, lng;
+    String lat, lng;
 
     String customer_id;
 
@@ -125,8 +125,8 @@ public class DriverTrackingActivity extends FragmentActivity implements OnMapRea
 
         if (getIntent() != null) {
 
-            lat = getIntent().getDoubleExtra("lat", -1.0);
-            lng = getIntent().getDoubleExtra("lng", -1.0);
+            lat = getIntent().getStringExtra("lat");
+            lng = getIntent().getStringExtra("lng");
             customer_id = getIntent().getStringExtra("customer_id");
 
         }
@@ -324,7 +324,7 @@ public class DriverTrackingActivity extends FragmentActivity implements OnMapRea
         mMap = googleMap;
 
         riderMarker = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(lat, lng))
+                .center(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)))
                 .radius(50) //radius is 50m
                 .strokeColor(Color.BLUE)
                 .fillColor(R.color.colorAccent)
@@ -333,8 +333,8 @@ public class DriverTrackingActivity extends FragmentActivity implements OnMapRea
         BuildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
 
-        geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference().child("DriversLocation"));
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat, lng), 0.05f);
+        geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference().child("DriversLocation").child(Common.currentDrivers.getCar_type()));
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(Double.parseDouble(lat), Double.parseDouble(lng)), 0.05f);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {

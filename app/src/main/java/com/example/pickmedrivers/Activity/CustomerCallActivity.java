@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -69,7 +71,9 @@ public class CustomerCallActivity extends AppCompatActivity {
 
     DatabaseReference reference;
 
-    double lat,lng;
+    String lat,lng;
+
+    TextView txt_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +91,7 @@ public class CustomerCallActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                DeclineRide();
+                DeclineRide(customer_id);
 
             }
         });
@@ -111,9 +115,9 @@ public class CustomerCallActivity extends AppCompatActivity {
 
     }
 
-    private void DeclineRide() {
+    private void DeclineRide(final String customer_id) {
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren()) {
@@ -167,6 +171,7 @@ public class CustomerCallActivity extends AppCompatActivity {
         txt_time = findViewById(R.id.txt_time);
         btnAccept = findViewById(R.id.acceptBtn);
         btnDecline = findViewById(R.id.declineBtn);
+        txt_count=findViewById(R.id.timer_count);
         mediaPlayer = MediaPlayer.create(CustomerCallActivity.this, R.raw.calling);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
@@ -174,17 +179,47 @@ public class CustomerCallActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
 
-           lat = getIntent().getDoubleExtra("lat", -1.0);
-           lng = getIntent().getDoubleExtra("lng", -1.0);
+           lat = getIntent().getStringExtra("lat");
+           lng = getIntent().getStringExtra("lng");
             customer_id = getIntent().getStringExtra("customer");
 
             getDirection(lat, lng);
 
 
         }
+
+        startTimer();
     }
 
-    private void getDirection(double lat, double lng) {
+    private void startTimer() {
+
+        CountDownTimer countDownTimer=new CountDownTimer(30000,1000) {
+            @Override
+            public void onTick(long l) {
+
+                txt_count.setText(String.valueOf(l/1000));
+
+            }
+
+            @Override
+            public void onFinish() {
+                if (!TextUtils.isEmpty(customer_id))
+                {
+                    DeclineRide(customer_id);
+
+                }else{
+
+                    Toast.makeText(CustomerCallActivity.this,"Customer Id is Null",Toast.LENGTH_LONG).show();
+
+
+                }
+            }
+        }.start();
+
+
+    }
+
+    private void getDirection(String lat, String lng) {
 
         // currentPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
 
@@ -273,7 +308,11 @@ public class CustomerCallActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mediaPlayer.release();
+
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
+
         super.onPause();
     }
 }

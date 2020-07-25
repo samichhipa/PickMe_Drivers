@@ -7,6 +7,8 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -38,9 +40,6 @@
             android:name=".Activity.DriverTrackingActivity"
             android:label="@string/title_activity_driver_tracking" />
         <activity android:name=".Activity.CustomerCallActivity" />
-        <activity
-            android:name=".Activity.HomeActivity"
-            android:label="@string/title_activity_home" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

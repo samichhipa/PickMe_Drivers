@@ -15,6 +15,7 @@ public class Common {
     public static String CURRENT_TOKEN = "";
     public static Location lastLocation=null;
     public static Drivers currentDrivers;
+    public static String SELECTED_CAR_TYPE;
 
     public static double base_fare=2.55;
     public static double time_rate=0.35;

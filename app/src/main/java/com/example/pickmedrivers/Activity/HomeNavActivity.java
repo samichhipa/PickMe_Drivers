@@ -2,14 +2,18 @@ package com.example.pickmedrivers.Activity;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -17,9 +21,11 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.pickmedrivers.Common.Common;
+import com.example.pickmedrivers.Model.Drivers;
 import com.example.pickmedrivers.Notification.DriverTokens;
 import com.example.pickmedrivers.R;
 import com.example.pickmedrivers.Retrofit.IGoogleAPI;
@@ -28,8 +34,11 @@ import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdate;
@@ -48,6 +57,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -83,9 +95,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -94,9 +109,11 @@ import retrofit2.Response;
 import static com.example.pickmedrivers.Common.Common.lastLocation;
 
 public class HomeNavActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener
-        , GoogleApiClient.ConnectionCallbacks, LocationListener {
+        OnMapReadyCallback {
 
+
+    FusedLocationProviderClient fusedLocationProviderClient;
+    LocationCallback locationCallback;
 
     NavigationView navigationView;
     DrawerLayout drawerLayout;
@@ -105,7 +122,8 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
     SwitchMaterial OnOffSwitch;
 
     //Presence System//
-    DatabaseReference currentUserRef, onlineRef;
+    DatabaseReference currentUserRef;
+    DatabaseReference onlineRef;
 
     private static int MY_PERMISSION_REQ_CODE = 1000;
     private static int PLAY_SERVICES_RES_REQUEST = 10001;
@@ -131,6 +149,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
     private String destination;
     private PolylineOptions polylineOptions, blackPolyLineOptions;
     private Polyline blackPolyline, greyPolyLine;
+
 
     private IGoogleAPI mService;
 
@@ -221,19 +240,23 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
         OnOffSwitch = findViewById(R.id.switchBtn);
 
+        FirebaseDatabase.getInstance().goOnline();
         onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
         currentUserRef = FirebaseDatabase.getInstance().getReference().child("DriversLocation")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(Common.currentDrivers.getCar_type()).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        onlineRef.addValueEventListener(new ValueEventListener() {
+
+        onlineRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
 
-                //we will remove value from driver table when driver disconnected..
+                //we will remove value from driver table when driver disconnected.
                 currentUserRef.onDisconnect().removeValue();
+
             }
 
             @Override
@@ -243,43 +266,22 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         });
 
 
-        mService = Common.getGoogleAPI();
-        driver_ref = FirebaseDatabase.getInstance().getReference().child("DriversLocation");
-        geoFire = new GeoFire(driver_ref);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(HomeNavActivity.this);
+
 
         getPermission();
+
+
+        mService = Common.getGoogleAPI();
+        //  driver_ref = FirebaseDatabase.getInstance().getReference().child("DriversLocation").child(Common.SELECTED_CAR_TYPE);
+        // geoFire = new GeoFire(driver_ref);
+
+        // getPermission();
         //BuildGoogleApiClient();
 
         polyLineList = new ArrayList<>();
 
         Places.initialize(getApplicationContext(), "AIzaSyAiiW16B1_pzqgbhjN5MmP8ss6bedgOoh4");
-        //btnGo=findViewById(R.id.searchBtn);
-/*
-        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-
-
-                destination = place.getAddress().toString();
-                destination = destination.replace(" ", ",");
-                getDirection();
-
-            }
-
-            @Override
-            public void onError(Status status) {
-
-                Toast.makeText(HomeActivity.this, "" + status.getStatus().getStatusMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-
- */
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -313,20 +315,45 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
                 if (isOnline) {
 
+
                     FirebaseDatabase.getInstance().goOnline();
 
-
                     setUpLocation();
-                    displayLocation();
                     mMap.setMyLocationEnabled(true);
+
+                    if (ActivityCompat.checkSelfPermission(HomeNavActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HomeNavActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        return;
+                    }
+
+                    driver_ref = FirebaseDatabase.getInstance().getReference("DriversLocation").child(Common.currentDrivers.getCar_type());
+                    geoFire = new GeoFire(driver_ref);
+
                     Snackbar.make(mapFragment.getView(), "You are Online", Snackbar.LENGTH_SHORT).show();
 
 
                 } else {
 
+                    onlineRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+
+                            //we will remove value from driver table when driver disconnected.
+                            currentUserRef.onDisconnect().removeValue();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
                     FirebaseDatabase.getInstance().goOffline();
+                    fusedLocationProviderClient.removeLocationUpdates(locationCallback);
                     mMap.setMyLocationEnabled(false);
-                    stopLocation();
+                    //  stopLocation();
                     if (currentMarker != null) {
                         currentMarker.remove();
                     }
@@ -341,7 +368,18 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
     private void displayLocation() {
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+            return;
+        }
+
+
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                lastLocation = location;
+            }
+        });
 
 
         if (lastLocation != null) {
@@ -376,18 +414,13 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 13.0f));
 
 
-
-
-
                     }
                 });
 
-                if (googleApiClient != null) {
-                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, HomeNavActivity.this);
-                }
 
             }
         }
+        //stopLocation();
 
     }
 
@@ -399,7 +432,8 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
             return;
         }
 
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+
     }
 
     private void setUpLocation() {
@@ -407,10 +441,21 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            return;
+            ActivityCompat.requestPermissions(HomeNavActivity.this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            }, MY_PERMISSION_REQ_CODE);
+        } else {
+
+
+            BuildLocationCallback();
+            buildLocationRequest();
+            if (OnOffSwitch.isChecked()) {
+
+                displayLocation();
+            }
+
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
 
     }
 
@@ -423,8 +468,40 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
     }
 
 
+    private void BuildLocationCallback() {
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+
+                    lastLocation = location;
+                }
+                displayLocation();
+            }
+        };
+
+
+    }
+
+
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    protected void onDestroy() {
+
+        FirebaseDatabase.getInstance().goOffline();
+
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        currentMarker.remove();
+        if (handler != null) {
+
+            handler.removeCallbacks(drawPathRunnable);
+        }
+
+
+        super.onDestroy();
+    }
+
+    private void buildLocationRequest() {
 
 
         locationRequest = new LocationRequest();
@@ -438,21 +515,12 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
 
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
+/*
     @Override
     public void onLocationChanged(Location location) {
 
@@ -464,6 +532,8 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
     }
 
+
+ */
 
     private List decodePoly(String encoded) {
 
@@ -497,17 +567,18 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
     }
 
 
+    /*  protected synchronized void BuildGoogleApiClient() {
+          googleApiClient = new GoogleApiClient.Builder(this)
+                  .addConnectionCallbacks(this)
+                  .addOnConnectionFailedListener(this)
+                  .addApi(LocationServices.API)
+                  .build();
+          googleApiClient.connect();
 
-    protected synchronized void BuildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        googleApiClient.connect();
+      }
 
-    }
 
+     */
     private void getDirection() {
 
         currentPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
@@ -630,7 +701,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
-                    , Manifest.permission.ACCESS_FINE_LOCATION}, 1000);
+                    , Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE}, 1000);
         }
 
     }
@@ -668,8 +739,20 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
             case 1000:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //BuildGoogleApiClient();
-                    lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+                    BuildLocationCallback();
+                    buildLocationRequest();
+
+                    if (OnOffSwitch.isChecked()) {
+
+                        driver_ref = FirebaseDatabase.getInstance().getReference("DriversLocation").child(Common.currentDrivers.getCar_type());
+                        geoFire = new GeoFire(driver_ref);
+
+
+                        displayLocation();
+
+                    }
+
 
                   /*  if (currentMarker != null) {
                         currentMarker.remove();
@@ -720,8 +803,12 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
             return;
         }
-        BuildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
+
+
+        BuildLocationCallback();
+        buildLocationRequest();
+        displayLocation();
+        // fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
     }
 
     private void setTokenId() {
@@ -754,16 +841,20 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         } else if (id == R.id.nav_gallery) {
 
 
+        } else if (id == R.id.nav_car_type) {
+
+            UpdateCarTypeDialog();
+
         } else if (id == R.id.nav_slideshow) {
 
 
-            FirebaseUser firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            if (firebaseUser!=null){
+            if (firebaseUser != null) {
 
 
                 FirebaseAuth.getInstance().signOut();
-                Intent intent=new Intent(HomeNavActivity.this, MainActivity.class);
+                Intent intent = new Intent(HomeNavActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -773,5 +864,97 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
+    }
+
+    private void UpdateCarTypeDialog() {
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(HomeNavActivity.this);
+        builder.setTitle("Update Car Type");
+
+        final View view = LayoutInflater.from(HomeNavActivity.this).inflate(R.layout.car_type_layout, null);
+
+        final RadioButton economical_car, business_car;
+
+        economical_car = view.findViewById(R.id.economical_car);
+        business_car = view.findViewById(R.id.business_car);
+
+        if (Common.currentDrivers.getCar_type().equals("Economical")) {
+
+            economical_car.setChecked(true);
+        } else if (Common.currentDrivers.getCar_type().equals("Business")) {
+
+            business_car.setChecked(true);
+        }
+
+
+        builder.setView(view);
+
+
+        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                Map<String, Object> data = new HashMap<>();
+                if (economical_car.isChecked()) {
+
+                    data.put("car_type", "Economical");
+                } else if (business_car.isChecked()) {
+
+
+                    data.put("car_type", "Business");
+                }
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Drivers");
+
+                ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+
+
+                            Toast.makeText(HomeNavActivity.this, "updated car type", Toast.LENGTH_LONG).show();
+
+
+                        } else {
+
+                            Toast.makeText(HomeNavActivity.this, task.getException().toString(), Toast.LENGTH_LONG).show();
+
+
+                        }
+                    }
+                });
+
+                ref.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Common.currentDrivers = snapshot.getValue(Drivers.class);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
+                dialogInterface.dismiss();
+
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+
+        builder.show();
+
     }
 }

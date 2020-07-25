@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:padding="10dp">
+
+    <RadioButton
+        android:id="@+id/economical_car"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Economical"/>
+
+    <RadioButton
+        android:id="@+id/business_car"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Business"/>
+
+</RadioGroup>
