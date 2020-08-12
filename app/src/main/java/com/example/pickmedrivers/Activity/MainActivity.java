@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import dmax.dialog.SpotsDialog;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btnLogin, btnRegister;
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseReference reference;
     FirebaseAuth auth;
+
+    android.app.AlertDialog alertCustomDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                             drivers.setCar_type("Economical");
 
                             SignUp(drivers);
+
 
                         }
 
@@ -208,6 +214,9 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogin = findViewById(R.id.loginBtn);
         btnRegister = findViewById(R.id.registerBtn);
+        alertCustomDialog=new SpotsDialog.Builder().setContext(this).setCancelable(false).setTheme(R.style.Custom).build();
+        alertCustomDialog.setMessage("Loading...");
+
     }
 
     @Override
@@ -218,10 +227,14 @@ public class MainActivity extends AppCompatActivity {
         if (firebaseUser!=null){
 
 
+            alertCustomDialog.show();
+
             FirebaseDatabase.getInstance().getReference().child("Drivers").child(firebaseUser.getUid())
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            alertCustomDialog.dismiss();
 
                             Drivers drivers=snapshot.getValue(Drivers.class);
                             Common.currentDrivers=drivers;
@@ -235,24 +248,30 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
 
+                            alertCustomDialog.dismiss();
+
                         }
                     });
 
 
 
-
-
-
+        }else{
+            alertCustomDialog.dismiss();
+            Log.d("LOG","NEW");
         }
     }
 
 
     private void SignUp(final Drivers drivers) {
 
+        alertCustomDialog.show();
+
         auth.createUserWithEmailAndPassword(drivers.getDriver_email(), drivers.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+
+
 
                     drivers.setId(auth.getCurrentUser().getUid());
                     reference.child(drivers.getId()).setValue(drivers);
@@ -260,11 +279,13 @@ public class MainActivity extends AppCompatActivity {
                     txt_email.setText("");
                     txt_password.setText("");
                     txt_phone.setText("");
+                    alertCustomDialog.dismiss();
                     Toast.makeText(MainActivity.this, "Registered Successfull..", Toast.LENGTH_SHORT).show();
 
 
                 } else {
 
+                    alertCustomDialog.dismiss();
                     Toast.makeText(MainActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
 
 
@@ -274,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
 
+                alertCustomDialog.dismiss();
                 Toast.makeText(MainActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
 
             }
@@ -283,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login(String email, String pass) {
+
+        alertCustomDialog.show();
 
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -295,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                                    alertCustomDialog.dismiss();
                                     Drivers drivers=snapshot.getValue(Drivers.class);
                                     Common.currentDrivers=drivers;
                                     Toast.makeText(MainActivity.this,"Login Successfull..", Toast.LENGTH_SHORT).show();
@@ -306,6 +331,9 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
+
+                                    alertCustomDialog.dismiss();
+                                    Toast.makeText(MainActivity.this,error.getMessage(), Toast.LENGTH_SHORT).show();
 
                                 }
                             });
@@ -319,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
 
+                alertCustomDialog.dismiss();
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

@@ -20,7 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
+        android:textSize="22sp"
         android:text="Start Trip"
+        android:background="@drawable/pickup_req_bg"
+        android:textColor="#fff"
         android:textAllCaps="false" />
 
 

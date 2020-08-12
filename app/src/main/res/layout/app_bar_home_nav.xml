@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/quantum_black_100"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -25,33 +25,40 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
         android:layout_marginTop="70dp"
-        android:background="@android:color/transparent"
-        >
+        android:layout_marginRight="15dp"
 
-        <fragment
-            android:layout_margin="20dp"
-            android:id="@+id/place_autocomplete_fragment"
+        app:cardElevation="8dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
+            android:orientation="horizontal"
+            android:weightSum="5"
+
+            >
+
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+
+                android:src="@drawable/destination_pin" />
 
 
+            <fragment
+                android:id="@+id/place_autocomplete_fragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="4" />
+
+        </LinearLayout>
 
 
     </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        >
-
-
-
-
-    </androidx.cardview.widget.CardView>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

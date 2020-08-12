@@ -7,57 +7,56 @@
     tools:context=".Activity.MainActivity">
 
     <TextView
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:fontFamily="@font/arca_majora_heavy"
+        android:gravity="center"
+        android:textStyle="bold"
         android:text="Driver"
         android:textColor="#092532"
-        android:textSize="32sp"/>
+        android:textSize="40sp" />
 
 
     <ImageView
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/pick_me"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/main_logo" />
 
     <LinearLayout
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <Button
-            android:fontFamily="@font/arca_majora_heavy"
             android:id="@+id/loginBtn"
-            android:textColor="#fff"
-            android:elevation="10dp"
-            android:background="#f69e7b"
-            android:padding="8dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="#000"
+            android:elevation="10dp"
+            android:padding="8dp"
             android:text="Login"
-            android:textAllCaps="false"/>
-        <Button
-            android:fontFamily="@font/arca_majora_heavy"
-            android:id="@+id/registerBtn"
+            android:textAllCaps="false"
             android:textColor="#fff"
-            android:elevation="10dp"
-            android:background="#596e79"
-            android:padding="8dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/registerBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:elevation="10dp"
+            android:padding="8dp"
+            android:textSize="22sp"
             android:text="Register"
-            android:textAllCaps="false"/>
-
-
-
+            android:textAllCaps="false"
+            android:textColor="#000" />
 
 
     </LinearLayout>

@@ -22,6 +22,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pickmedrivers.Common.Common;
@@ -147,11 +148,14 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
     private Button btnGo;
     private PlaceAutocompleteFragment autocompleteFragment;
     private String destination;
+    private String destination_lat,destination_lng;
     private PolylineOptions polylineOptions, blackPolyLineOptions;
     private Polyline blackPolyline, greyPolyLine;
 
 
     private IGoogleAPI mService;
+
+    TextView txt_driver_name,txt_phone;
 
     Runnable drawPathRunnable = new Runnable() {
         @Override
@@ -225,6 +229,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         setContentView(R.layout.activity_home_nav);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Home");
 
         final SupportMapFragment mapFragment;
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -236,6 +241,16 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(HomeNavActivity.this);
         navigationView.getMenu().getItem(0).setChecked(true);
+
+        View headerView = navigationView.getHeaderView(0);
+        txt_driver_name= headerView.findViewById(R.id.header_driver_name);
+        txt_phone = headerView.findViewById(R.id.header_driver_phone);
+
+        txt_driver_name.setText(Common.currentDrivers.getName());
+        txt_phone.setText(Common.currentDrivers.getDriver_phone());
+
+
+
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -286,7 +301,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME, Place.Field.LAT_LNG));
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -294,7 +309,9 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
 
                 destination = place.getName().toString();
-                destination = destination.replace(" ", ",");
+                destination = destination.replace(" ", "");
+                destination_lat=String.valueOf(place.getLatLng().latitude);
+                destination_lng=String.valueOf(place.getLatLng().longitude);
                 Toast.makeText(HomeNavActivity.this, destination, Toast.LENGTH_SHORT).show();
 
                 getDirection();
@@ -316,11 +333,6 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                 if (isOnline) {
 
 
-                    FirebaseDatabase.getInstance().goOnline();
-
-                    setUpLocation();
-                    mMap.setMyLocationEnabled(true);
-
                     if (ActivityCompat.checkSelfPermission(HomeNavActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HomeNavActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                         return;
@@ -329,12 +341,21 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                     driver_ref = FirebaseDatabase.getInstance().getReference("DriversLocation").child(Common.currentDrivers.getCar_type());
                     geoFire = new GeoFire(driver_ref);
 
+                    FirebaseDatabase.getInstance().goOnline();
+
+                    BuildLocationCallback();
+                    buildLocationRequest();
+                    displayLocation();
+                    mMap.setMyLocationEnabled(true);
+
+
+
                     Snackbar.make(mapFragment.getView(), "You are Online", Snackbar.LENGTH_SHORT).show();
 
 
                 } else {
 
-                    onlineRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    onlineRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -353,7 +374,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                     FirebaseDatabase.getInstance().goOffline();
                     fusedLocationProviderClient.removeLocationUpdates(locationCallback);
                     mMap.setMyLocationEnabled(false);
-                    //  stopLocation();
+                   //stopLocation();
                     if (currentMarker != null) {
                         currentMarker.remove();
                     }
@@ -363,6 +384,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
             }
         });
+
 
     }
 
@@ -418,9 +440,12 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                 });
 
 
+            }else{
+
+
             }
         }
-        //stopLocation();
+        stopLocation();
 
     }
 
@@ -449,8 +474,8 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
 
             BuildLocationCallback();
             buildLocationRequest();
-            if (OnOffSwitch.isChecked()) {
 
+            if (OnOffSwitch.isChecked()) {
                 displayLocation();
             }
 
@@ -491,7 +516,6 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
         FirebaseDatabase.getInstance().goOffline();
 
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        currentMarker.remove();
         if (handler != null) {
 
             handler.removeCallbacks(drawPathRunnable);
@@ -591,7 +615,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                     "mode=driving&" +
                     "transit_routing_preference-less_driving&" +
                     "origin=" + Common.lastLocation.getLatitude() + "," + Common.lastLocation.getLongitude() + "&" +
-                    "destination=" + destination + "&" +
+                    "destination=" + destination_lat +","+ destination_lng + "&" +
                     "key=" + getResources().getString(R.string.google_direction_api);
 
             Log.d("SAMI", requestApi);
@@ -665,7 +689,7 @@ public class HomeNavActivity extends AppCompatActivity implements NavigationView
                         polyLineAnimator.start();
                         carMarker = mMap.addMarker(new MarkerOptions().position(currentPosition)
                                 .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.source_pin)));
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
 
                         handler = new Handler();
                         index = -1;

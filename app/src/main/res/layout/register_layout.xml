@@ -11,10 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:fontFamily="@font/arca_majora_heavy"
         android:text="SignUp"
         android:textColor="#092532"
-        android:textSize="28sp"
+        android:textSize="38sp"
 
         />
 
@@ -32,13 +31,12 @@
         android:drawableLeft="@drawable/ic_action_profile"
         android:drawablePadding="10dp"
         android:drawableTint="#000"
-        android:fontFamily="@font/arca_majora_bold"
         android:hint="Name"
         android:inputType="textPersonName"
         android:maxLines="1"
         android:textColor="#596e79"
         android:textColorHint="#939393"
-        android:textSize="20sp" />
+        android:textSize="22sp" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/regiser_email"
@@ -53,12 +51,11 @@
         android:drawableLeft="@drawable/ic_action_email"
         android:drawablePadding="10dp"
         android:drawableTint="#000"
-        android:fontFamily="@font/arca_majora_bold"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:textColor="#596e79"
-        android:textSize="20sp" />
+        android:textSize="22sp" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/register_password"
@@ -73,13 +70,12 @@
         android:drawableLeft="@drawable/ic_action_password"
         android:drawablePadding="10dp"
         android:drawableTint="#000"
-        android:fontFamily="@font/arca_majora_bold"
         android:hint="Password"
         android:inputType="textPassword"
         android:maxLines="1"
         android:textColor="#596e79"
         android:textColorHint="#939393"
-        android:textSize="20sp" />
+        android:textSize="22sp" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/register_phone"
@@ -89,12 +85,11 @@
         android:drawableLeft="@drawable/ic_action_phone"
         android:drawablePadding="10dp"
         android:drawableTint="#000"
-        android:fontFamily="@font/arca_majora_bold"
         android:hint="Phone"
         android:inputType="number"
         android:maxLines="1"
         android:textColor="#596e79"
-        android:textSize="20sp"
+        android:textSize="22sp"
         app:met_baseColor="#596e79"
         app:met_floatingLabel="highlight"
         app:met_primaryColor="#596e79"
@@ -113,14 +108,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/login_btn"
-            android:elevation="10dp"
-            android:fontFamily="@font/arca_majora_bold"
+            android:background="#000"
+            android:elevation="15dp"
             android:padding="5dp"
             android:text="Register"
             android:textAllCaps="false"
             android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textSize="22sp" />
 
         <Button
             android:id="@+id/registerCancelBtn"
@@ -128,14 +122,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/register_btn"
-            android:elevation="10dp"
-            android:fontFamily="@font/arca_majora_bold"
+            android:background="@android:color/transparent"
+            android:elevation="15dp"
             android:padding="5dp"
             android:text="Cancel"
             android:textAllCaps="false"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            android:textColor="@color/quantum_black_100"
+            android:textSize="22sp" />
 
 
     </LinearLayout>

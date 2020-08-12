@@ -7,15 +7,25 @@
     android:padding="10dp">
 
     <RadioButton
+        android:drawableLeft="@drawable/selected_economy"
         android:id="@+id/economical_car"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Economical"/>
+        android:text="Economical"
+        android:drawablePadding="10dp"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+
+        />
 
     <RadioButton
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"
         android:id="@+id/business_car"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Business"/>
+        android:text="Business"
+        android:drawableLeft="@drawable/selected_business"/>
 
 </RadioGroup>

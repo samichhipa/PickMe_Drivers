@@ -4,17 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
     tools:context=".Activity.CustomerCallActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="40sp"
-        android:textColor="#fff"
+        android:text="Customer Calling..."
+        android:layout_margin="20dp"
+        android:textColor="#000"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
         android:id="@+id/timer_count"
         android:text="30"
         android:gravity="center"
+        android:layout_margin="30dp"
         android:layout_above="@id/circle_img"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -23,7 +30,7 @@
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/map_circle" />
+        android:src="@drawable/location" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,8 +88,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/login_btn"
+            android:background="#000"
             android:text="Accept"
+            android:textSize="22sp"
             android:textAllCaps="false"
             android:textColor="#fff" />
 
@@ -92,10 +100,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/register_btn"
+            android:background="@android:color/transparent"
             android:text="Decline"
+            android:textSize="22sp"
             android:textAllCaps="false"
-            android:textColor="#fff" />
+            android:textColor="#000" />
 
 
     </LinearLayout>

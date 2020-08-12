@@ -3,6 +3,8 @@ package com.example.pickmedrivers.Activity;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.pickmedrivers.Common.Common;
@@ -23,6 +25,8 @@ public class TripDetailsActivity extends FragmentActivity implements OnMapReadyC
 
     TextView txt_total_price,txt_distance,txt_fare,txt_time,txt_start_address,txt_end_address,txt_date;
 
+    ImageView CancelBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +37,14 @@ public class TripDetailsActivity extends FragmentActivity implements OnMapReadyC
         mapFragment.getMapAsync(this);
 
         init();
+
+    CancelBtn.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    });
+
     }
 
     private void init() {
@@ -45,6 +57,7 @@ public class TripDetailsActivity extends FragmentActivity implements OnMapReadyC
         txt_start_address=findViewById(R.id.trip_source_address);
         txt_end_address=findViewById(R.id.trip_destination_address);
         txt_date=findViewById(R.id.trip_date);
+        CancelBtn=findViewById(R.id.cancelBtn);
 
 
 
@@ -66,8 +79,8 @@ public class TripDetailsActivity extends FragmentActivity implements OnMapReadyC
             txt_fare.setText(String.format("$ %.2f", Common.base_fare));
             txt_time.setText(String.format("%s Min",getIntent().getStringExtra("time")));
             txt_distance.setText(String.format("%s km",getIntent().getStringExtra("distance")));
-            txt_start_address.setText(String.format("Source: "+getIntent().getStringExtra("source_address")));
-            txt_end_address.setText(String.format("Destination: "+getIntent().getStringExtra("destination_address")));
+            txt_start_address.setText(String.format(getIntent().getStringExtra("source_address")));
+            txt_end_address.setText(String.format(getIntent().getStringExtra("destination_address")));
 
 
             String[] loc=getIntent().getStringExtra("location_end").split(",");

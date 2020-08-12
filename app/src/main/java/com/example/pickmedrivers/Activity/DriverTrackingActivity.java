@@ -326,8 +326,8 @@ public class DriverTrackingActivity extends FragmentActivity implements OnMapRea
         riderMarker = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(Double.parseDouble(lat), Double.parseDouble(lng)))
                 .radius(50) //radius is 50m
-                .strokeColor(Color.BLUE)
-                .fillColor(R.color.colorAccent)
+                .strokeColor(Color.BLACK)
+                .fillColor(R.color.colorPrimaryDark)
                 .strokeWidth(5.0f));
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         BuildGoogleApiClient();
